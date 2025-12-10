@@ -12,15 +12,28 @@ def index():
 
 @app.route('/winner', methods=['POST'])
 def save_winner():
-    data = request.get_json()
+    try:
+        data = request.get_json()
+        print("Datos recibidos:", data)
 
-    winner = Winner(id=0, name=data['name'], email=data['email'], phrase=data['phrase'])
+        winner = Winner(
+            id=0,
+            name=data['name'],
+            email=data['email'],
+            phrase=data['phrase']
+        )
 
-    winner.save()
-    if winner.id != 0:
-        return jsonify({"success": True, "id": winner.id, "mesajito":"hola"}), 201
-    else:
-        return jsonify({"success": False}), 500
+        result = winner.save()
+        print("Resultado del save:", result)
+
+        if winner.id != 0:
+            return jsonify({"success": True, "id": winner.id}), 201
+        else:
+            return jsonify({"success": False}), 500
+
+    except Exception as e:
+        print("🔥 ERROR REAL DEL SERVER:", e)
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/winners', methods=['GET'])
 def get_winners():

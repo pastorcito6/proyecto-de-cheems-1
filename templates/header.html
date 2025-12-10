@@ -39,12 +39,12 @@
 
   <div class="content-wrapper">
     <div class="text-center mt-4">
-  <button id="btn-restart" class="btn btn-primary">Reiniciar</button>
-</div>
+      <button id="btn-restart" class="btn btn-primary">Reiniciar</button>
+      <span class="ms-3">Intentos: <strong id="attempts">0</strong></span>
+    </div>
 
     <script>
-    window.IMG_OK = "{{ url_for('static', filename='images/cheems_ok.png')}}"
-    window.IMG_BAD = "{{ url_for('static', filename='images/cheems_bad.png')}}"
-    
-  </script>
-  
+      window.IMG_OK = "{{ url_for('static', filename='images/cheems_ok.png')}}";
+      window.IMG_BAD = "{{ url_for('static', filename='images/cheems_bad.png')}}";
+      window.IMG_QUESTION = "{{ url_for('static', filename='images/cheems_question.png')}}";
+    </script>

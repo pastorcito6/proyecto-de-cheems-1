@@ -1,63 +1,99 @@
-//document object model
+// static/js/cheems.js
 document.addEventListener("DOMContentLoaded", () => {
 
+    // Guardar ganador
     document.getElementById("btn-save").addEventListener("click", saveWinner);
-    document.getElementById("btn-restart").addEventListener("click", () => {
-    location.reload();
-  });
 
-
-
-   const randomNumber = Math.floor(Math.random() * 14 ) + 1;
-
-   //TODO: eliminar antes de lanzar el juego
-   console.debug("Numero random: " + randomNumber)
-
-   const images = document.querySelectorAll(".cheems-card img"); //regresa una coleccion con los elementos que cumplan la condicion, este caso imagenes con clase cheems-card
-
-
+    // Variables de juego
+    let randomNumber = 0;
+    const images = document.querySelectorAll(".cheems-card img");
     const clickedCards = new Set();
+    let gameOver = false;
+    let attempts = 0;
 
-   images.forEach((img, index) => {
+    const attemptsSpan = document.getElementById("attempts");
+    const restartBtn = document.getElementById("btn-restart");
+
+    // Inicializa o reinicia el juego
+    function initGame() {
+       
+        randomNumber = Math.floor(Math.random() * 14) + 1;
+
+        // Reiniciar estado
+        clickedCards.clear();
+        gameOver = false;
+
+        // Voltear todas las cartas a la imagen de pregunta
+        images.forEach((img) => {
+            img.src = window.IMG_QUESTION;
+        });
+
+        console.debug("Cheems:", randomNumber);
+    }
+
+    // Handler para reiniciar (sin recargar la página)
+    restartBtn.addEventListener("click", () => {
+        attempts += 1;
+        if (attemptsSpan) attemptsSpan.textContent = attempts;
+        initGame();
+    });
+
+    // Inicialización primera vez
+    initGame();
+
+    // Manejo de clicks sobre cartas
+    images.forEach((img, index) => {
 
         const id = index + 1;
         img.dataset.id = id;
 
         img.addEventListener("click", () => {
 
-            if(!clickedCards.has(id)){
-            clickedCards.add(id);
-        }
+            // Si ya terminó la partida, no permitir más clicks hasta reiniciar
+            if (gameOver) return;
 
-            if (id == randomNumber){
+            // Si ya se había clickeado esa carta, ignorar
+            if (!clickedCards.has(id)) {
+                clickedCards.add(id);
+            } else {
+                return; // ya descubierto
+            }
+
+            if (id == randomNumber) {
+                // Perdió: mostrar imagen mala y destapar las demás
                 img.src = window.IMG_BAD;
 
-                images.forEach((img, index) => {
-                    let id = index + 1;
-
-                    if (id != randomNumber){
-                        img.src = window.IMG_OK
+                images.forEach((otherImg, otherIndex) => {
+                    const otherId = otherIndex + 1;
+                    if (otherId != randomNumber) {
+                        otherImg.src = window.IMG_OK;
                     }
+                });
 
-                })  
-                alert("Perdiste")
-                
-
-            } else{
+                gameOver = true;
+                alert("Perdiste");
+            } else {
+                // Carta correcta
                 img.src = window.IMG_OK;
-                //alert("Ganaste")
 
-                if(clickedCards.size === 14){
-                    //alert("Ganaste");
-                    const modal = new bootstrap.Modal(document.getElementById("modal-winner"));
-                    modal.show();
+                // Si se descubrieron 14 cartas (todas menos la mala) -> ganó
+                if (clickedCards.size === (images.length - 1)) {
+                    gameOver = true;
+                    const modalElement = document.getElementById("modal-winner");
+                    if (modalElement) {
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                    } else {
+                        alert("Ganaste");
+                    }
                 }
             }
-        })
-        
-   })
+        });
 
-   function saveWinner(){
+    });
+
+    // Función para guardar ganador (igual que antes)
+    function saveWinner(){
         const name = document.getElementById("name").value.trim();
         const email = document.getElementById("email").value.trim();
         const phrase = document.getElementById("phrase").value.trim();
@@ -69,14 +105,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         fetch("/winner", {
             method: "POST",
-            headers: {"Content-Type" : "application/json"}, //Se indica que lo que se envia es un tipo json
+            headers: {"Content-Type" : "application/json"},
             body: JSON.stringify({
-                name: name, //primer name es el parametro que se espera en app.py, el segundo su valor
+                name: name,
                 email: email,
                 phrase: phrase
             })
         })
-        //Recibe la promsea de la llamada para saber si se cumplio
         .then(response => {
             if (response.ok){
                 return response.json();
@@ -85,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         })
         .then(result => {
-            if(result.success){//Se pone success porque asi esta en el jsonify del app.py
+            if(result.success){
                 alert("El registro fue guardado correctamente");
             }else{
                 alert("No se pudo guardar, intente mas tarde");
@@ -94,7 +129,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(error => {
             console.error("Error: ", error)
+            alert("Error de conexión con el servidor.");
         })
    }
 
-}); 
+});
