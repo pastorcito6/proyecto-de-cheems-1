@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Diviértete con Cheems en este divertido buscaminas.">
+  <meta name="keywords" content="buscaminas, cheems, juego, divertido">
+  <meta name="author" content="ITSON">
+  <title>BuscaCheems</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+</head>
+
+    <header class="wrapper bg-soft-primary">
+      <nav class="navbar navbar-expand-lg center-nav transparent navbar-light">
+        <div class="container flex-lg-row flex-nowrap align-items-center">
+          
+          <div class="navbar-brand w-100">
+            <a href="index.html">
+              <img src="{{ url_for('static', filename='images/cheems_logo.png')}}" alt="Logotipo Cheems" />
+            </a>
+          </div>
+          <div class="navbar-collapse offcanvas offcanvas-nav offcanvas-start">
+            <div class="offcanvas-header d-lg-none">
+              <h3 class="text-white fs-30 mb-0">BuscaCheems</h3>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body ms-lg-auto d-flex flex-column h-100">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('get_winners') }}">Consultar ganadores</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+  <div class="content-wrapper">
+    <div class="text-center mt-4">
+  <button id="btn-restart" class="btn btn-primary">Reiniciar</button>
+</div>
+
+    <script>
+    window.IMG_OK = "{{ url_for('static', filename='images/cheems_ok.png')}}"
+    window.IMG_BAD = "{{ url_for('static', filename='images/cheems_bad.png')}}"
+    
+  </script>
+  

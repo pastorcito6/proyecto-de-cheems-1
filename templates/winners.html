@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+ 
+{% include 'header.html' %}
+<section id="snippet-3" class="wrapper bg-light wrapper-border">
+      <div class="container pt-5 pb-13">
+
+        <h2 class="display-4 mb-3 text-center">Buscaminas Cheems</h2>
+        <p class="lead text-center mb-10 px-md-16 px-lg-0">lista de ganadores.</p>
+
+<table>
+<thead>
+<tr>
+    <th>Nombre</th>
+    <th>Email</th>
+    <th>Frase motivadora</th>
+</tr>   
+</thead>
+<tbody>
+{% for w in winners %}
+<tr>
+    <td>{{ w.name }}</td>
+    <td>{{ w.email }}</td>
+    <td>{{ w.phrase }}</td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="3">No hay ganadores aún.</td>
+</tr>
+{% endfor %}
+</table>
+
+{% include 'footer.html' %}
