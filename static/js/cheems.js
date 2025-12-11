@@ -92,11 +92,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-    // Función para guardar ganador (igual que antes)
+    // Función para guardar ganador actualizada para enviar intentos
     function saveWinner(){
         const name = document.getElementById("name").value.trim();
         const email = document.getElementById("email").value.trim();
         const phrase = document.getElementById("phrase").value.trim();
+        
+        // Se obtiene el número de intentos del contador visual y se suma 1 (el intento actual)
+        const currentAttempts = parseInt(document.getElementById("attempts").textContent) + 1;
 
         if (!name || !email || !phrase){
             alert("Por favor completa todos los campos");
@@ -109,7 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
             body: JSON.stringify({
                 name: name,
                 email: email,
-                phrase: phrase
+                phrase: phrase,
+                attempts: currentAttempts // Nuevo campo enviado al servidor
             })
         })
         .then(response => {
@@ -122,6 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(result => {
             if(result.success){
                 alert("El registro fue guardado correctamente");
+                // Opcional: redirigir a la tabla de ganadores tras guardar
+                window.location.href = "/winners";
             }else{
                 alert("No se pudo guardar, intente mas tarde");
             }

@@ -1,44 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 
- 
 {% include 'header.html' %}
 <section id="snippet-3" class="wrapper bg-light wrapper-border">
-      <div class="container pt-5 pb-13">
+  <div class="container pt-5 pb-13">
 
-        <h2 class="display-4 mb-3 text-center">Buscaminas Cheems</h2>
-        <p class="lead text-center mb-10 px-md-16 px-lg-0">lista de ganadores.</p>
+    <h2 class="display-4 mb-3 text-center">Buscaminas Cheems</h2>
+    <p class="lead text-center mb-10 px-md-16 px-lg-0">lista de ganadores.</p>
 
-<table style="border-collapse: separate; border-spacing: 0; margin: auto;">
-<thead>
-<tr>
-   <th style="background-color: rgb(47, 189, 255); color: white; 
-border-top-left-radius: 12px; border: 2px solid rgb(0, 102, 255);
-padding: 15px; text-align: center; font-family: Arial;">Nombre</th>
+    <table style="border-collapse: separate; border-spacing: 0; margin: auto;">
+      <thead>
+        <tr>
+          <th style="background-color: rgb(47, 189, 255); color: white; border-top-left-radius: 12px; border: 2px solid rgb(0, 102, 255); padding: 15px; text-align: center; font-family: Arial;">Nombre</th>
+          <th style="background-color: rgb(47, 189, 255); color: white; border-top: 2px solid rgb(0, 102, 255); border-bottom: 2px solid rgb(0, 102, 255); padding: 15px; text-align: center; font-family: Arial;">Email</th>
+          <th style="background-color: rgb(47, 189, 255); color: white; border-top: 2px solid rgb(0, 102, 255); border-bottom: 2px solid rgb(0, 102, 255); padding: 15px; text-align: center; font-family: Arial;">Frase motivadora</th>
+          <th style="background-color: rgb(47, 189, 255); color: white; border-top: 2px solid rgb(0, 102, 255); border-bottom: 2px solid rgb(0, 102, 255); padding: 15px; text-align: center; font-family: Arial;">Intentos</th>
+          <th style="background-color: rgb(47, 189, 255); color: white; border-top: 2px solid rgb(0, 102, 255); border-bottom: 2px solid rgb(0, 102, 255); padding: 15px; text-align: center; font-family: Arial;">Fecha</th>
+          <th style="background-color: rgb(47, 189, 255); color: white; border-top-right-radius: 12px; border: 2px solid rgb(0, 102, 255); padding: 15px; text-align: center; font-family: Arial;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for w in winners %}
+        <tr>
+          <td style="padding: 12px; text-align: center; font-family: Arial; background-color: #f4f9ff; border: 1px solid rgb(0, 102, 255);">{{ w.name }}</td>
+          <td style="padding: 12px; text-align: center; font-family: Arial; background-color: #f4f9ff; border: 1px solid rgb(0, 102, 255);">{{ w.email }}</td>
+          <td style="padding: 12px; text-align: center; font-family: Arial; background-color: #f4f9ff; border: 1px solid rgb(0, 102, 255);">{{ w.phrase }}</td>
+          <td style="padding: 12px; text-align: center; font-family: Arial; background-color: #f4f9ff; border: 1px solid rgb(0, 102, 255);">{{ w.attempts }}</td>
+          <td style="padding: 12px; text-align: center; font-family: Arial; background-color: #f4f9ff; border: 1px solid rgb(0, 102, 255);">{{ w.date_created.strftime('%d/%m/%Y %H:%M') if w.date_created else 'N/A' }}</td>
+          <td style="padding: 12px; text-align: center; font-family: Arial; background-color: #f4f9ff; border: 1px solid rgb(0, 102, 255);">
+            <button onclick="confirmDelete('{{ w.id }}')" class="btn btn-sm btn-danger" style="padding: 5px 10px; font-size: 12px;">Eliminar</button>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" style="padding: 20px; text-align: center; font-family: Arial; background-color: #f4f9ff; border: 1px solid rgb(0, 102, 255);">No hay ganadores aún.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 
-<th style="background-color: rgb(47, 189, 255); color: white; 
-border-top: 2px solid rgb(0, 102, 255); 
-border-bottom: 2px solid rgb(0, 102, 255);
-padding: 15px; text-align: center; font-family: Arial;">Email</th>
-
-<th style="background-color: rgb(47, 189, 255); color: white; 
-border-top-right-radius: 12px; border: 2px solid rgb(0, 102, 255);
-padding: 15px; text-align: center; font-family: Arial;">Frase motivadora</th>
-
-</tr>   
-</thead>
-<tbody>
-{% for w in winners %}
-<tr>
-    <td style="padding: 12px; text-align: center; font-family: Arial; background-color: #f4f9ff; border: 1px solid rgb(0, 102, 255);">{{ w.name }}</td>
-    <td style="padding: 12px; text-align: center; font-family: Arial; background-color: #f4f9ff; border: 1px solid rgb(0, 102, 255);">{{ w.email }}</td>
-    <td style="padding: 12px; text-align: center; font-family: Arial; background-color: #f4f9ff; border: 1px solid rgb(0, 102, 255);">{{ w.phrase }}</td>
-</tr>
-{% else %}
-<tr>
-    <td colspan="3">No hay ganadores aún.</td>
-</tr>
-{% endfor %}
-</table>
+<script>
+  function confirmDelete(id) {
+    if (confirm("¿Estás seguro de que deseas eliminar este registro de ganador?")) {
+      fetch(`/winner/delete/${id}`, {
+          method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert("Registro eliminado correctamente.");
+            location.reload(); // Recarga la página para actualizar la tabla
+          } else {
+            alert("Error al intentar eliminar el registro.");
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          alert("Error de comunicación con el servidor.");
+        });
+    }
+  }
+</script>
 
 {% include 'footer.html' %}
+</html>
